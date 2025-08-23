@@ -8,6 +8,7 @@ import (
 type Config struct {
 	DatabaseURL string
 	BaseURL     string
+	Secret      string
 }
 
 var C Config
@@ -19,6 +20,7 @@ func init() {
 	C = Config{
 		DatabaseURL: getEnv("DATABASE_URL", ""),
 		BaseURL:     getEnv("BASE_URL", ""),
+		Secret:      getEnv("SECRET_KEY", ""),
 	}
 }
 

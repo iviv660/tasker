@@ -14,7 +14,6 @@ func NewUserRepo(db *sql.DB) *UserRepo {
 	return &UserRepo{db: db}
 }
 
-// Register вставляет пользователя и возвращает его ID
 func (r *UserRepo) Register(ctx context.Context, user *entity.User) (int64, error) {
 	const q = `
 		INSERT INTO users (email, password_hash, description, created_at, updated_at)
@@ -28,7 +27,6 @@ func (r *UserRepo) Register(ctx context.Context, user *entity.User) (int64, erro
 	return id, nil
 }
 
-// GetByID возвращает пользователя по ID
 func (r *UserRepo) GetByID(ctx context.Context, id int64) (*entity.User, error) {
 	const q = `
 		SELECT id, email, password_hash, description, created_at, updated_at
@@ -40,12 +38,11 @@ func (r *UserRepo) GetByID(ctx context.Context, id int64) (*entity.User, error) 
 	if err := r.db.QueryRowContext(ctx, q, id).Scan(
 		&u.ID, &u.Email, &u.PasswordHash, &u.Description, &u.CreatedAt, &u.UpdatedAt,
 	); err != nil {
-		return nil, err // sql.ErrNoRows пробросится наверх — обработай в usecase/handler
+		return nil, err
 	}
 	return &u, nil
 }
 
-// GetByEmail возвращает пользователя по email
 func (r *UserRepo) GetByEmail(ctx context.Context, email string) (*entity.User, error) {
 	const q = `
 		SELECT id, email, password_hash, description, created_at, updated_at
@@ -57,7 +54,7 @@ func (r *UserRepo) GetByEmail(ctx context.Context, email string) (*entity.User, 
 	if err := r.db.QueryRowContext(ctx, q, email).Scan(
 		&u.ID, &u.Email, &u.PasswordHash, &u.Description, &u.CreatedAt, &u.UpdatedAt,
 	); err != nil {
-		return nil, err // sql.ErrNoRows — значит пользователя нет
+		return nil, err
 	}
 	return &u, nil
 }

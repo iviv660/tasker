@@ -14,7 +14,6 @@ func NewTaskRepo(db *sql.DB) *TaskRepo {
 	return &TaskRepo{db: db}
 }
 
-// Create — создаёт задачу и возвращает заполненную сущность
 func (r *TaskRepo) Create(ctx context.Context, task *entity.Task) (*entity.Task, error) {
 	const query = `
 		INSERT INTO tasks (owner_id, title, description, status, created_at, updated_at)
@@ -33,7 +32,6 @@ func (r *TaskRepo) Create(ctx context.Context, task *entity.Task) (*entity.Task,
 	return task, nil
 }
 
-// Update — обновляет задачу владельца и возвращает актуальную версию
 func (r *TaskRepo) Update(ctx context.Context, task *entity.Task) (*entity.Task, error) {
 	const query = `
 		UPDATE tasks
@@ -57,7 +55,6 @@ func (r *TaskRepo) Update(ctx context.Context, task *entity.Task) (*entity.Task,
 	return task, nil
 }
 
-// Delete — удаляет задачу только у её владельца
 func (r *TaskRepo) Delete(ctx context.Context, id int64, ownerID int64) error {
 	const query = `DELETE FROM tasks WHERE id = $1 AND owner_id = $2`
 	res, err := r.db.ExecContext(ctx, query, id, ownerID)
@@ -71,7 +68,6 @@ func (r *TaskRepo) Delete(ctx context.Context, id int64, ownerID int64) error {
 	return nil
 }
 
-// GetByID — достаёт задачу по id владельца
 func (r *TaskRepo) GetByID(ctx context.Context, id int64, ownerID int64) (*entity.Task, error) {
 	const query = `
 		SELECT id, owner_id, title, description, status, created_at, updated_at
@@ -87,7 +83,6 @@ func (r *TaskRepo) GetByID(ctx context.Context, id int64, ownerID int64) (*entit
 	return &t, nil
 }
 
-// List — список задач конкретного пользователя
 func (r *TaskRepo) List(ctx context.Context, ownerID int64) ([]*entity.Task, error) {
 	const query = `
 		SELECT id, owner_id, title, description, status, created_at, updated_at

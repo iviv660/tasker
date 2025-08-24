@@ -17,18 +17,24 @@ func NewUserUseCase(repo RepoUser) *UserUseCase {
 }
 
 func (u *UserUseCase) Register(ctx context.Context, email, password, description string) (int64, error) {
-	user, err := u.repo.GetByEmail(ctx, email)
-	if err != nil {
+	existing, err := u.repo.GetByEmail(ctx, email)
+	if err != nil && err != sql.ErrNoRows {
 		return 0, err
 	}
-	if user != nil {
+	if existing != nil {
 		return 0, errors.New("аккаунт с этой почтой уже существует")
 	}
-	pas, err := security.HashPassword(password)
+
+	hash, err := security.HashPassword(password)
 	if err != nil {
 		return 0, err
 	}
-	id, err := u.repo.Register(ctx, &entity.User{Email: email, PasswordHash: pas, Description: description})
+
+	id, err := u.repo.Register(ctx, &entity.User{
+		Email:        email,
+		PasswordHash: hash,
+		Description:  description,
+	})
 	if err != nil {
 		return 0, err
 	}

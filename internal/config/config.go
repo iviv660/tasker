@@ -18,7 +18,7 @@ func init() {
 	_ = godotenv.Load()
 
 	C = Config{
-		DatabaseURL: getEnv("DATABASE_URL", ""),
+		DatabaseURL: getEnv("POSTGRES_URL", ""),
 		BaseURL:     getEnv("BASE_URL", ""),
 		Secret:      getEnv("SECRET_KEY", ""),
 	}
